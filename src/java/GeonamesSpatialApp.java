@@ -10,9 +10,15 @@ public class GeonamesSpatialApp {
 
   public static void main(String[] args) {
     String geonamesFilePath = null;
-    if (args.length == 2) {
-      if (0 == "-f".compareTo(args[0])) {
-        geonamesFilePath = args[1];
+    boolean readFileArg = false;
+    for (String arg : args) {
+      if (0 == "-f".compareTo(arg)) {
+        readFileArg = true;
+      } else {
+        if (readFileArg) {
+          geonamesFilePath = arg;
+          readFileArg = false;
+        }
       }
     }
 

@@ -1,9 +1,20 @@
 # -*- coding: utf-8 -*-
-
+import sys
 
 if __name__ == "__main__":
+	defaultFilePath = "../../data/cities15000.txt"
+	filePath = defaultFilePath
+	readFileArg = False
+	for arg in sys.argv:
+		if ("-f" == arg):
+			readFileArg = True
+		else:
+			if (readFileArg):
+				filePath = arg
+				readFileArg = False
+
 	print "Geonames"
-	with open("../../data/cities15000.txt") as geonamesFile:
+	with open(filePath) as geonamesFile:
 		lineNumber = 0
 		for line in geonamesFile:
 			lineNumber +=1
