@@ -11,7 +11,7 @@ public class GeonamesSpatialApp {
   public static void main(String[] args) {
     String geonamesFilePath = null;
     if (args.length == 2) {
-      if (args[0] == "-f") {
+      if (0 == "-f".compareTo(args[0])) {
         geonamesFilePath = args[1];
       }
     }
