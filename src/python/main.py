@@ -8,7 +8,7 @@ if __name__ == "__main__":
 		for line in geonamesFile:
 			lineNumber +=1
 			tokens = line.split("\t")
-			if (6 < len(tokens)):
+			if (5 < len(tokens)):
 				id = int(tokens[0])
 				lat = float(tokens[4])
 				lon = float(tokens[5])
