@@ -6,7 +6,7 @@ import java.io.*;
 
 public class GeonamesSpatialApp {
 
-  private static final String defaultFilePath = "../../data/Cities15000.txt";
+  private static final String defaultFilePath = "../../data/cities15000.txt";
 
   public static void main(String[] args) {
     String geonamesFilePath = null;

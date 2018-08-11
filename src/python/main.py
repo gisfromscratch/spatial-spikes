@@ -13,7 +13,7 @@ if __name__ == "__main__":
 				filePath = arg
 				readFileArg = False
 
-	print "Geonames"
+	print ("Geonames")
 	with open(filePath) as geonamesFile:
 		lineNumber = 0
 		for line in geonamesFile:
@@ -24,8 +24,8 @@ if __name__ == "__main__":
 				lat = float(tokens[4])
 				lon = float(tokens[5])
 				if (lat < -90 or 90 < lat):
-					print "Feature %d has an invalid latitude!"
+					print ("Feature %d has an invalid latitude!")
 				if (lon < -180 or 180 < lon):
-					print "Feature %d has an invalid longitude!"
+					print ("Feature %d has an invalid longitude!")
 
-		print "%d lines read" % lineNumber
+		print ("%d lines read" % lineNumber)
