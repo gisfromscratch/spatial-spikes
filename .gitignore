@@ -2,4 +2,5 @@
 *.class
 *.exe
 *.o
+*.obj
 __pycache__
