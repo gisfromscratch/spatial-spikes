@@ -34,7 +34,11 @@ int main(int argc, char **args)
 				string token;
 				for (int index = 0; getline(lineStream, token, '\t'); index++)
 				{
+					#ifdef linux
 					int id __attribute__((unused));
+					#else
+					int id;
+					#endif
 					float lat, lon;
 					switch (index)
 					{
