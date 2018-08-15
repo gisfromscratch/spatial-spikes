@@ -3,23 +3,52 @@
 #include <sstream>
 #include <string>
 
+//#include <stdlib.h>
+
 using namespace std;
 
-int main(int argc, char **args)
+/*
+int bufferedRead(const char *filePath)
 {
-	string defaultFilePath = "../../data/cities15000.txt";
-	
-	string filePath;
-	if (argc == 3 && "-f" == string(args[1]))
+	static const size_t bufferSize = 16*1024;
+
+	FILE *file = fopen(filePath, "r");
+	if (NULL == file)
 	{
-		filePath = args[2];
+		return 1;
 	}
-	else
+
+	long lineNumber = 0;
+	char buffer[bufferSize+1];
+	size_t elementSize = 1;
+	size_t bytesRead;
+	char line[bufferSize+1];
+	while (0 < (bytesRead = fread(buffer, elementSize, bufferSize, file)))
 	{
-		filePath = defaultFilePath;
+		char *lineEnd;
+		for (char *lineStart = buffer; NULL != (lineEnd = strchr(lineStart, '\n')); lineStart = lineEnd + 1)
+		{
+			int charCount = lineEnd - buffer;
+			if (-1 < charCount)
+			{
+				strncpy(line, buffer, charCount);
+				line[charCount] = '\0';
+				//cout << line << endl;
+
+				lineNumber++;
+			}
+		}
 	}
-	
-	cout << "Geonames" << endl;
+
+	fclose(file);
+
+	cout << lineNumber << " lines read" << endl;
+	return 0;
+}
+*/
+
+int lineRead(const char *filePath)
+{
 	ifstream geonamesFile(filePath);
 	if (geonamesFile)
 	{
@@ -66,4 +95,23 @@ int main(int argc, char **args)
 		
 		cout << lineNumber << " lines read" << endl;
 	}
+	return 0;
+}
+
+int main(int argc, char **args)
+{
+	string defaultFilePath = "../../data/cities15000.txt";
+	
+	string filePath;
+	if (argc == 3 && "-f" == string(args[1]))
+	{
+		filePath = args[2];
+	}
+	else
+	{
+		filePath = defaultFilePath;
+	}
+	
+	cout << "Geonames" << endl;
+	return lineRead(filePath.c_str());
 }
