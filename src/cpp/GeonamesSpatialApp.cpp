@@ -32,6 +32,35 @@ int bufferedRead(const char *filePath)
 		{
 			*line = '\0';
 			lineNumber++;
+
+			char *token  = strchr(line, '\t');
+			for (int index = 0; token; index++, token = strchr(line, '\t'))
+			{
+				*token = '\0';
+
+				int id;
+				float lat, lon;
+				switch (index)
+				{
+					case 0:
+						id = atoi(token);
+						break;
+					case 4:
+						lat = atof(token);
+						if (lat < -90 || 90 < lat)
+						{
+							cerr << "Feature " << id << " has an invalid latitude!" << endl;
+						}
+						break;
+					case 5:
+						lon = atof(token);
+						if (lon < -180 || 180 < lon)
+						{
+							cerr << "Feature " << id << " has an invalid longitude!" << endl;
+						}
+						break;
+				}
+			}
 		}
 	}
 
@@ -107,5 +136,5 @@ int main(int argc, char **args)
 	}
 	
 	cout << "Geonames" << endl;
-	return lineRead(filePath.c_str());
+	return bufferedRead(filePath.c_str());
 }
