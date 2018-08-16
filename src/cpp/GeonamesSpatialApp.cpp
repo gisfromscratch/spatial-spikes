@@ -3,11 +3,10 @@
 #include <sstream>
 #include <string>
 
-//#include <stdlib.h>
+#include <stdlib.h>
 
 using namespace std;
 
-/*
 int bufferedRead(const char *filePath)
 {
 	static const size_t bufferSize = 16*1024;
@@ -17,26 +16,22 @@ int bufferedRead(const char *filePath)
 	{
 		return 1;
 	}
+	if (ferror(file))
+	{
+		return 1;
+	}
 
 	long lineNumber = 0;
-	char buffer[bufferSize+1];
-	size_t elementSize = 1;
-	size_t bytesRead;
-	char line[bufferSize+1];
-	while (0 < (bytesRead = fread(buffer, elementSize, bufferSize, file)))
+	char buffer[bufferSize];
+	char *line;
+	while (!feof(file))
 	{
-		char *lineEnd;
-		for (char *lineStart = buffer; NULL != (lineEnd = strchr(lineStart, '\n')); lineStart = lineEnd + 1)
+		fgets(buffer, bufferSize, file);
+		line = strchr(buffer, '\n');
+		if (line)
 		{
-			int charCount = lineEnd - buffer;
-			if (-1 < charCount)
-			{
-				strncpy(line, buffer, charCount);
-				line[charCount] = '\0';
-				//cout << line << endl;
-
-				lineNumber++;
-			}
+			*line = '\0';
+			lineNumber++;
 		}
 	}
 
@@ -45,7 +40,6 @@ int bufferedRead(const char *filePath)
 	cout << lineNumber << " lines read" << endl;
 	return 0;
 }
-*/
 
 int lineRead(const char *filePath)
 {
