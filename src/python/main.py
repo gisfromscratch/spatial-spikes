@@ -24,8 +24,8 @@ if __name__ == "__main__":
 				lat = float(tokens[4])
 				lon = float(tokens[5])
 				if (lat < -90 or 90 < lat):
-					print ("Feature %d has an invalid latitude!")
+					print ("Feature %d has an invalid latitude!" % id)
 				if (lon < -180 or 180 < lon):
-					print ("Feature %d has an invalid longitude!")
+					print ("Feature %d has an invalid longitude!" % id)
 
 		print ("%d lines read" % lineNumber)
