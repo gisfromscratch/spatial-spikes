@@ -31,35 +31,38 @@ int bufferedRead(const char *filePath)
 		if (line)
 		{
 			*line = '\0';
-			lineNumber++;
+		}
+		else
+		{
+			line = buffer;
+		}
 
-			char *token  = strchr(line, '\t');
-			for (int index = 0; token; index++, token = strchr(line, '\t'))
+		lineNumber++;
+
+		char *token  = strtok(line, "\t");
+		for (int index = 0; token; index++, token = strtok(NULL, "\t"))
+		{
+			int id;
+			float lat, lon;
+			switch (index)
 			{
-				*token = '\0';
-
-				int id;
-				float lat, lon;
-				switch (index)
-				{
-					case 0:
-						id = atoi(token);
-						break;
-					case 4:
-						lat = atof(token);
-						if (lat < -90 || 90 < lat)
-						{
-							cerr << "Feature " << id << " has an invalid latitude!" << endl;
-						}
-						break;
-					case 5:
-						lon = atof(token);
-						if (lon < -180 || 180 < lon)
-						{
-							cerr << "Feature " << id << " has an invalid longitude!" << endl;
-						}
-						break;
-				}
+				case 0:
+					id = atoi(token);
+					break;
+				case 4:
+					lat = atof(token);
+					if (lat < -90 || 90 < lat)
+					{
+						cerr << "Feature " << id << " has an invalid latitude!" << endl;
+					}
+					break;
+				case 5:
+					lon = atof(token);
+					if (lon < -180 || 180 < lon)
+					{
+						cerr << "Feature " << id << " has an invalid longitude!" << endl;
+					}
+					break;
 			}
 		}
 	}
