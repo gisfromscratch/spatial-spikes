@@ -1,4 +1,4 @@
-package app;
+package geojson.shell;
 
 public class App {
     public static void main(String[] args) throws Exception {
