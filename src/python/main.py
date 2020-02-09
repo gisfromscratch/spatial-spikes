@@ -14,7 +14,7 @@ if __name__ == "__main__":
 				readFileArg = False
 
 	print ("Geonames")
-	with open(filePath) as geonamesFile:
+	with open(filePath, encoding="utf-8") as geonamesFile:
 		lineNumber = 0
 		for line in geonamesFile:
 			lineNumber +=1
