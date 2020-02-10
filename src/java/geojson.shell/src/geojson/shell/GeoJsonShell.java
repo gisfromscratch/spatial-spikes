@@ -30,7 +30,7 @@ public class GeoJsonShell {
             JsonNode featureNode = featureElements.next();
             JsonNode geometryNode = featureNode.get("geometry");
             String geoJson = geometryNode.toString();
-            MapGeometry mapGeometry = GeometryEngine.geoJsonToGeometry(geoJson, GeoJsonImportFlags.geoJsonImportDefaults, Geometry.Type.Point);
+            MapGeometry mapGeometry = GeometryEngine.geoJsonToGeometry(geoJson, GeoJsonImportFlags.geoJsonImportDefaults, geometryType);
             geometries.add(mapGeometry);
         }
 
