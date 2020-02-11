@@ -13,15 +13,16 @@ import com.esri.core.geometry.GeoJsonImportFlags;
 import com.esri.core.geometry.Geometry;
 import com.esri.core.geometry.GeometryEngine;
 import com.esri.core.geometry.MapGeometry;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class GeoJsonShell {
 
-    private static List<MapGeometry> readGeometriesFromGeoJsonFile(String filePath, Geometry.Type geometryType)
+    private static List<SimpleFeature> readFeaturesFromGeoJsonFile(String filePath, Geometry.Type geometryType)
             throws IOException
     {
-        ArrayList<MapGeometry> geometries = new ArrayList<>();
+        ArrayList<SimpleFeature> features = new ArrayList<>();
         byte[] geoJsonData = Files.readAllBytes(Paths.get(filePath));
 
         ObjectMapper mapper = new ObjectMapper();
@@ -33,21 +34,24 @@ public class GeoJsonShell {
             JsonNode geometryNode = featureNode.get("geometry");
             String geoJson = geometryNode.toString();
             MapGeometry mapGeometry = GeometryEngine.geoJsonToGeometry(geoJson, GeoJsonImportFlags.geoJsonImportDefaults, geometryType);
-            geometries.add(mapGeometry);
+            JsonNode propertiesNode = featureNode.get("properties");
+            Map<String, Object> attributes = mapper.convertValue(propertiesNode, new TypeReference<Map<String, Object>>(){});
+            SimpleFeature feature = new SimpleFeature(mapGeometry, attributes);
+            features.add(feature);
         }
 
-        return geometries;
+        return features;
     }
 
-    private static Map<MapGeometry, List<MapGeometry>> intersect(List<MapGeometry> countries, List<MapGeometry> cities) {
-        HashMap<MapGeometry, List<MapGeometry>> intersections = new HashMap<>(cities.size());
-        Iterator<MapGeometry> cityElements = cities.iterator();
+    private static Map<SimpleFeature, List<SimpleFeature>> intersect(List<SimpleFeature> countries, List<SimpleFeature> cities) {
+        HashMap<SimpleFeature, List<SimpleFeature>> intersections = new HashMap<>(cities.size());
+        Iterator<SimpleFeature> cityElements = cities.iterator();
         while (cityElements.hasNext()) {
-            MapGeometry city = cityElements.next();
-            ArrayList<MapGeometry> countryIntersections = new ArrayList<>();
-            Iterator<MapGeometry> countryElements = countries.iterator();
+            SimpleFeature city = cityElements.next();
+            ArrayList<SimpleFeature> countryIntersections = new ArrayList<>();
+            Iterator<SimpleFeature> countryElements = countries.iterator();
             while (countryElements.hasNext()) {
-                MapGeometry country = countryElements.next();
+                SimpleFeature country = countryElements.next();
                 Geometry intersection = GeometryEngine.intersect(country.getGeometry(), city.getGeometry(), city.getSpatialReference());
                 if (!intersection.isEmpty()) {
                     countryIntersections.add(country);
@@ -59,13 +63,46 @@ public class GeoJsonShell {
         return intersections;
     }
 
+    public enum FileArgument {
+        Unknown,
+        LetFile,
+        RightFile
+    }
+
     public static void main(String[] args) throws Exception {
+        String leftFile = "../../../data/world_cities1000_sample.geojson";
+        String rightFile = "../../../data/world_countries_sample.geojson";
+        FileArgument argument = FileArgument.Unknown;
+        for (String arg : args) {
+            switch (arg) {
+                case "-l":
+                    argument = FileArgument.LetFile;
+                    break;
+
+                case "-r":
+                    argument = FileArgument.RightFile;
+                    break;
+
+                default:
+                    switch (argument) {
+                        case LetFile:
+                            leftFile = arg;
+                            break;
+                        case RightFile:
+                            rightFile = arg;
+                            break;
+                    }
+                    argument = FileArgument.Unknown;
+                    break;
+            }
+        }
+
         int numberOfMismatches = 0;
-        List<MapGeometry> cities = readGeometriesFromGeoJsonFile("../../../data/world_cities1000_sample.geojson", Geometry.Type.Point);
-        List<MapGeometry> countries = readGeometriesFromGeoJsonFile("../../../data/world_countries_sample.geojson", Geometry.Type.Polygon);
-        Map<MapGeometry, List<MapGeometry>> intersections = intersect(countries, cities);
-        for (Map.Entry<MapGeometry, List<MapGeometry>> intersection : intersections.entrySet()) {
-            List<MapGeometry> countryIntersections = intersection.getValue();
+        List<SimpleFeature> cities = readFeaturesFromGeoJsonFile(leftFile, Geometry.Type.Point);
+        List<SimpleFeature> countries = readFeaturesFromGeoJsonFile(rightFile, Geometry.Type.Polygon);
+        Map<SimpleFeature, List<SimpleFeature>> intersections = intersect(countries, cities);
+        for (Map.Entry<SimpleFeature, List<SimpleFeature>> intersection : intersections.entrySet()) {
+            List<SimpleFeature> countryIntersections = intersection.getValue();
             if (countryIntersections.isEmpty()) {
                 numberOfMismatches++;
             }
