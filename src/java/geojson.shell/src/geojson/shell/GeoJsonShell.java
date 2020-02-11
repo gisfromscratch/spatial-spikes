@@ -98,15 +98,29 @@ public class GeoJsonShell {
         }
 
         int numberOfMismatches = 0;
+        int numberOfWrongCountryCodes = 0;
+        String leftCountryCodeAttributeName = "field_9";
+        String rightCountryCodeAttributeName = "ISO";
         List<SimpleFeature> cities = readFeaturesFromGeoJsonFile(leftFile, Geometry.Type.Point);
         List<SimpleFeature> countries = readFeaturesFromGeoJsonFile(rightFile, Geometry.Type.Polygon);
         Map<SimpleFeature, List<SimpleFeature>> intersections = intersect(countries, cities);
         for (Map.Entry<SimpleFeature, List<SimpleFeature>> intersection : intersections.entrySet()) {
+            SimpleFeature city = intersection.getKey();
             List<SimpleFeature> countryIntersections = intersection.getValue();
             if (countryIntersections.isEmpty()) {
                 numberOfMismatches++;
+            } else {
+                Object cityCountryCode = city.getAttribute(leftCountryCodeAttributeName);
+                String cityCountryCodeAsText = cityCountryCode.toString();
+                for (SimpleFeature country : countryIntersections) {
+                    Object countryCode = country.getAttribute(rightCountryCodeAttributeName);
+                    String countryCodeAsText = countryCode.toString();
+                    if (!cityCountryCodeAsText.equalsIgnoreCase(countryCodeAsText)) {
+                        numberOfWrongCountryCodes++;
+                    }
+                }
             }
         }
-        System.out.println(numberOfMismatches);
+        System.out.println(String.format("%d mismatches and %d wrong country codes", numberOfMismatches, numberOfWrongCountryCodes));
     }
 }

@@ -30,4 +30,8 @@ public class SimpleFeature {
     public Map<String, Object> getAttributes() {
         return attributes;
     }
+
+    public Object getAttribute(String name) {
+        return getAttributes().get(name);
+    }
 }
