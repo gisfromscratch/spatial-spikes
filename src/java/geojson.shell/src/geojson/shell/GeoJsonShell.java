@@ -91,6 +91,8 @@ public class GeoJsonShell {
                         case RightFile:
                             rightFile = arg;
                             break;
+                        case Unknown:
+                            break;
                     }
                     argument = FileArgument.Unknown;
                     break;
